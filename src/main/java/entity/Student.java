@@ -8,13 +8,13 @@ import com.alibaba.fastjson.JSON;
  */
 public class Student implements JsonAble {
 
-    private String name;
+    private String name;        // 姓名
 
-    private Integer age;
+    private Integer age;        // 年龄
 
-    private String clazz;
+    private String clazz;       // 班级
 
-    private String email;
+    private String email;       // 邮箱
 
     public Student() {
     }
@@ -53,6 +53,14 @@ public class Student implements JsonAble {
 
     public String toJsonString() {
         return JSON.toJSONString(this);
+    }
+
+    public String toSQLString() {
+        return "INSERT INTO student(name, age, clazz, email) VALUES('"
+                + this.name + "', "
+                + this.age + ", '"
+                + this.clazz + "', '"
+                + this.email + "');";
     }
 
     public static Student fromJsonString(String json) {

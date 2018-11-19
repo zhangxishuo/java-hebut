@@ -10,6 +10,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * @author zhangxishuo on 2018/11/14
@@ -63,16 +67,29 @@ public class Server {
                 String json = MessageService.fromMessage(message);
                 // 从JSON反序列化为对象
                 Student student = Student.fromJsonString(json);
-                System.out.println(student.getName());
-                System.out.println(student.getAge());
-                System.out.println(student.getClazz());
-                System.out.println(student.getEmail());
-                // 发送相应数据
+                // 存入数据库
+                persistStudent(student);
+                // 发送响应数据
                 Utils.sendMessage(printWriter, CONFIG.SUCCESS_RESPONSE);
             } catch (CustomException e) {
                 System.out.println("数据异常: " + e.getMessage());
             }
         }
         System.out.println("服务端线程结束");
+    }
+
+    /**
+     * 持久化学生实体
+     */
+    private static void persistStudent(Student student) {
+        try {
+            String url = "jdbc:mysql://127.0.0.1:7777/java?characterEncoding=utf-8";
+            Connection connection = DriverManager.getConnection(url, "root", "root");
+            Statement statement = connection.createStatement();
+            String SQL = student.toSQLString();
+            statement.executeUpdate(SQL);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
