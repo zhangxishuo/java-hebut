@@ -83,13 +83,21 @@ public class Server {
      */
     private static void persistStudent(Student student) {
         try {
+            Class.forName("com.mysql.jdbc.Driver");
+            // 数据库连接配置
             String url = "jdbc:mysql://127.0.0.1:7777/java?characterEncoding=utf-8";
+            // 获取连接
             Connection connection = DriverManager.getConnection(url, "root", "root");
+            // 获取语句
             Statement statement = connection.createStatement();
+            // 生成SQL语句
             String SQL = student.toSQLString();
+            // 执行语句
             statement.executeUpdate(SQL);
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("ERROR: " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            System.out.println("ERROR: " + e.getMessage());
         }
     }
 }
